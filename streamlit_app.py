@@ -157,7 +157,7 @@ if uploaded_file is None:
 # DATA LOADING
 #######################################
 
-@st.cache_data
+@st.cache
 def load_data(path: str):
     file_extension = path.name.split('.')[-1]
     if file_extension == 'xlsx':
