@@ -309,7 +309,7 @@ if page == "Home":
             return None
 
         # Convert BULAN to datetime with a default year
-        asset_data['MONTH'] = pd.to_datetime(asset_data['MONTH'] + ' 2024', format='%B %Y')
+        asset_data['MONTH'] = pd.to_datetime(asset_data['MONTH'] , format='%B')
 
         # Sort data by DATE
         asset_data = asset_data.sort_values(by='MONTH')
