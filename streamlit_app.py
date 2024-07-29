@@ -11,16 +11,20 @@ from plotly.subplots import make_subplots
 def show_news_page(df):
     st.title("Distribusi Aset PT.PLN UP3 Surabaya Barat")
 
-    # Sidebar filter for BULAN
-    bulan_options = df['BULAN'].dropna().unique().tolist() 
-    selected_bulan = st.sidebar.selectbox("Select month", bulan_options)
+    # Sidebar filter for YEAR (single selection)
+    year_options = df['YEAR'].dropna().unique().tolist()  # Drop NaN values
+    selected_year = st.sidebar.selectbox("Pilih Tahun", year_options)
 
-    # Filter the dataframe by the selected BULAN
-    filtered_df = df[df['BULAN'] == selected_bulan]
+    # Sidebar filter for MONTH (single selection)
+    bulan_options = df['MONTH'].dropna().unique().tolist()  # Drop NaN values
+    selected_month = st.sidebar.selectbox("Pilih Bulan", bulan_options)
+
+    # Filter dataframe based on selected filters
+    filtered_df_df = df[(df['YEAR'] == selected_year) & (df['MONTH'] == selected_month)]
 
     # Displaying pie charts for selected assets
-    def plot_pie_chart_for_asset(filtered_df, asset):
-        asset_data = filtered_df[filtered_df['ASET'] == asset]
+    def plot_pie_chart_for_asset(filtered_df_df, asset):
+        asset_data = filtered_df_df[filtered_df_df['ASET'] == asset]
         if asset_data.empty:
             return None
 
@@ -51,8 +55,8 @@ def show_news_page(df):
         return fig
 
     # Display bar charts for selected assets
-    def plot_bar_chart_for_asset(filtered_df, asset):
-        asset_data = filtered_df[filtered_df['ASET'] == asset]
+    def plot_bar_chart_for_asset(filtered_df_df, asset):
+        asset_data = filtered_df_df[filtered_df_df['ASET'] == asset]
         if asset_data.empty:
             return None
 
@@ -79,7 +83,7 @@ def show_news_page(df):
 
     # Display the pie charts and bar charts for each asset
     for asset in assets_to_display:
-        filtered_by_asset = filtered_df[filtered_df['ASET'] == asset]
+        filtered_by_asset = filtered_df_df[filtered_df_df['ASET'] == asset]
         if not filtered_by_asset.empty:
             col1, col2, col3 = st.columns(3)
 
