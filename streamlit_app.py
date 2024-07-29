@@ -312,17 +312,18 @@ if page == "Home":
             st.warning(f"No data available for asset: {asset}")
             return None
 
-        # Convert BULAN to datetime with a default year
-        asset_data['MONTH'] = pd.to_datetime(asset_data['MONTH'] , format='%B')
+         # Konversi kolom DATE ke datetime dengan format bulan/hari/tahun
+        asset_data['DATE'] = pd.to_datetime(asset_data['DATE'], format='%m/%d/%Y')
+        asset_data['MONTH'] = asset_data['DATE'].dt.to_period('M')  # Ekstrak bulan sebagai periode bulanan
 
         # Sort data by DATE
-        asset_data = asset_data.sort_values(by='MONTH')
+        asset_data = asset_data.sort_values(by='DATE')
 
         fig = go.Figure()
 
         # Plot MAXIMO
         fig.add_trace(go.Scatter(
-            x=asset_data['MONTH'],
+            x=asset_data['DATE'],
             y=asset_data['MAXIMO'],
             mode='lines+markers',
             name='MAXIMO',
@@ -331,7 +332,7 @@ if page == "Home":
 
         # Plot LTB
         fig.add_trace(go.Scatter(
-            x=asset_data['MONTH'],
+            x=asset_data['DATE'],
             y=asset_data['LTB '],
             mode='lines+markers',
             name='LTB ',
@@ -341,18 +342,17 @@ if page == "Home":
         fig.update_layout(
             title_text=f'Growth of MAXIMO and LTB for Asset: {asset}',
             xaxis_title="Month",
-            yaxis_title="Value",
+            yaxis_title="Nilai",
             height=400,  # Adjust the height of the chart
             xaxis=dict(
                 tickmode='array',
                 tickvals=asset_data['DATE'],
-                ticktext=[date.strftime('%b %Y') for date in asset_data['MONTH']]
+                ticktext=[date.strftime('%m/%Y') for date in asset_data['DATE']]  # Format label sumbu x
             )
         )
 
         return fig
-
-
+    
     #######################################
     # STREAMLIT LAYOUT
     #######################################
