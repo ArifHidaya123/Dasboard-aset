@@ -123,7 +123,7 @@ st.markdown(
     }
 
     .navbar {
-        background-color: grey;
+        background-color: #928217;
         padding: 10px;
         border: 3px solid purple;
         border-radius: 5px;
@@ -140,7 +140,7 @@ st.markdown(
     }
 
     .navbar a:hover {
-        background-color: black;
+        background-color: pink;
         color: grey;
     }
     </style>
@@ -161,7 +161,7 @@ if uploaded_file is None:
 # DATA LOADING
 #######################################
 
-@st.cache
+@st.cache_data
 def load_data(path: str):
     file_extension = path.name.split('.')[-1]
     if file_extension == 'xlsx':
@@ -213,17 +213,6 @@ if page == "Home":
 
     # Filter dataframe based on selected filters
     filtered_df = df[df['Status'].isin(selected_status) & df['Changed Month'].isin(selected_months)]
-
-    # Sidebar filter for years (multiple selection)
-    year_options = df['YEAR'].dropna().unique().tolist()  # Drop NaN values
-    selected_years = st.sidebar.multiselect("Select Years", year_options, default=year_options)
-
-    # Sidebar filter for months (multiple selection)
-    bulan_options = df['MONTH'].dropna().unique().tolist()  # Drop NaN values
-    selected_month = st.sidebar.multiselect("Select Months", bulan_options, default=bulan_options)
-
-    # Filter dataframe based on selected filters
-    filtered_df_df = df[(df['YEAR'].isin(selected_years)) & (df['MONTH'].isin(selected_month))]
 
     #######################################
     # VISUALIZATION METHODS
@@ -371,9 +360,24 @@ if page == "Home":
             plot_total_assets(filtered_df)
             plot_status_counts(filtered_df)
 
-
     # Dropdown to select an asset
-    selected_asset = st.selectbox("Select an Asset", filtered_df_df['ASET'].unique())
+    selected_asset = st.selectbox("Select an Asset", filtered_df['ASET'].unique())
+
+    # Create two columns for filters
+    col3, col4 = st.columns(2)
+
+    # Sidebar filter for years (multiple selection) in the left column
+    with col3:
+        year_options = df['YEAR'].dropna().unique().tolist()  # Drop NaN values
+        selected_years = st.multiselect("Select Years for asset", year_options, default=year_options)
+
+    # Sidebar filter for months (multiple selection) in the right column
+    with col4:
+        bulan_options = df['MONTH'].dropna().unique().tolist()  # Drop NaN values
+        selected_month = st.multiselect("Select Months for asset", bulan_options, default=bulan_options)
+
+    # Filter dataframe based on selected filters
+    filtered_df_df = df[(df['YEAR'].isin(selected_years)) & (df['MONTH'].isin(selected_month))]
 
     # Display the bar charts and growth graph for selected assets
     filtered_by_asset = filtered_df_df[filtered_df_df['ASET'] == selected_asset]
@@ -386,6 +390,7 @@ if page == "Home":
         st.plotly_chart(growth_graph_fig, use_container_width=True)
     else:
         st.warning(f"No data available for asset: {selected_asset}")
+
 
 elif page == "News":
     show_news_page(df)  # Call the function directly here
