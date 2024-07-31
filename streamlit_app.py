@@ -123,7 +123,7 @@ st.markdown(
     }
 
     .navbar {
-        background-color: #928217;
+        background-color: #595A2E;
         padding: 10px;
         border: 3px solid purple;
         border-radius: 5px;
